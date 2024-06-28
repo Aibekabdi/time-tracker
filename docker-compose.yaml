@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=time-tracker-db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - ""
+    volumes:
+      - ""
+    healthcheck:
+      test: pg_isready -U postgres -d postgres
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    
+  migrate:
+    image: migrate/migrate
+    container_name: marketplace-migrate
+    volumes:
+      - ./migrations/:/migrations
+    command: ["-path", "./migrations", "-database",  "postgres://postgres:qwerty@db:5432/postgres?sslmode=disable", "up"]
+    links:
+      - db
+    depends_on:
+      db:
+        condition: service_healthy

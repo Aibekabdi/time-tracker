@@ -9,7 +9,9 @@ import (
 
 type Config struct {
 	EnvLevel string `envconfig:"ENV_LEVEL" default:"local"`
+	ApiAddress string `envconfig:"API_ADDRESS"`
 	Server
+	DB
 }
 
 type Server struct {
