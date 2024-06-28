@@ -5,7 +5,8 @@ import (
 	"log"
 	"log/slog"
 	"os"
-	"time-tracker/internal/config"
+
+	"github.com/Aibekabdi/time-tracker/internal/config"
 )
 
 const (

@@ -3,7 +3,8 @@ package server
 import (
 	"context"
 	"net/http"
-	"time-tracker/internal/config"
+
+	"github.com/Aibekabdi/time-tracker/internal/config"
 )
 
 type Server struct {
