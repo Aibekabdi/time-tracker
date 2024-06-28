@@ -5,7 +5,7 @@ import "time"
 type Task struct {
 	UserID      uint
 	Title       string
-	StartTime   time.Time
-	EndTime     time.Time
 	Description string
+	Start_at   time.Time
+	End_at    time.Time
 }
