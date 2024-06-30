@@ -10,8 +10,8 @@ import (
 type Config struct {
 	EnvLevel   string `envconfig:"ENV_LEVEL" default:"local"`
 	ApiAddress string `envconfig:"API_ADDRESS"`
-	HTTPServer
-	DB
+	HTTPServer HTTPServer
+	DB         DB
 }
 
 type HTTPServer struct {
@@ -21,6 +21,9 @@ type HTTPServer struct {
 }
 
 type DB struct {
+	DBName   string `envconfig:"DB_NAME"`
+	DBURL    string `envconfig:"DB_URL"`
+	TimeZone string `envconfig:"DB_TIMEZONE"`
 }
 
 func LoadConfig() (*Config, error) {

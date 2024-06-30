@@ -12,6 +12,7 @@ import (
 
 	"github.com/Aibekabdi/time-tracker/internal/config"
 	"github.com/Aibekabdi/time-tracker/internal/handlers"
+	"github.com/Aibekabdi/time-tracker/internal/repository/postgres"
 	"github.com/Aibekabdi/time-tracker/internal/server"
 )
 
@@ -30,16 +31,23 @@ func New(log *slog.Logger, cfg *config.Config) *App {
 func (a *App) Run() {
 	const op = "app.Run"
 	log := a.log.With(slog.String("op", op))
+	ctx, cancel := context.WithTimeout(context.TODO(), 1*time.Minute)
+	defer cancel()
+	_, err := postgres.NewPostgres(ctx, a.log, &a.cfg.DB)
+	if err != nil {
+		log.Error(err.Error())
+		os.Exit(1)
+	}
 
 	handlers := handlers.NewHandler(a.log, a.cfg.ApiAddress)
 	srv := new(server.Server)
 
-	log.Info("server is starting", slog.String("address", a.cfg.Address))
+	log.Info("server is starting", slog.String("address", a.cfg.HTTPServer.Address))
 	go func() {
 		if err := srv.Run(a.cfg.HTTPServer, handlers.InitRoutes()); err != nil {
 			if !errors.Is(err, http.ErrServerClosed) {
 				log.Error("failed to start server", slog.String("error", err.Error()))
-				os.Exit(1)
+				os.Exit(2)
 			}
 		}
 	}()
@@ -49,11 +57,9 @@ func (a *App) Run() {
 	sig := <-sigChan
 	log.Info("Received terminate, graceful shutdown", slog.Any("signal", sig))
 
-	ctx, cancel := context.WithTimeout(context.TODO(), 1*time.Minute)
-	defer cancel()
-
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Error("failed gracefull shutdown", slog.Any("error", err))
+		os.Exit(3)
 	}
 	log.Info("Server is closed")
 }

@@ -2,11 +2,6 @@ FROM golang:latest
 
 WORKDIR /app
 
-COPY go.* ./
+RUN go install github.com/cosmtrek/air@latest
 
-RUN go mod download
-
-COPY . ./
-
-
-CMD [ "/cmd/app" ]
+COPY . .

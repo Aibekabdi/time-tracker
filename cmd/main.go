@@ -6,7 +6,9 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/Aibekabdi/time-tracker/internal/app"
 	"github.com/Aibekabdi/time-tracker/internal/config"
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -18,14 +20,19 @@ var (
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
 	conf, err := config.LoadConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = setupLogger(conf.EnvLevel)
+	logger, err := setupLogger(conf.EnvLevel)
 	if err != nil {
 		log.Fatal(err)
 	}
+	app := app.New(logger, conf)
+	app.Run()
 }
 
 func setupLogger(env string) (*slog.Logger, error) {

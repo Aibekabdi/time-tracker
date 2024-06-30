@@ -1,6 +1,19 @@
-version: "3.9"
-
 services:
+  # web:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - .:/usr/src/app
+  #   command: air --build.cmd "go build -o bin/ cmd/main.go" --build.bin "./bin"
+  #   links:
+  #     - db
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+
   db:
     image: postgres:latest
     environment:
@@ -8,9 +21,9 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - ""
+      - "5432:5432"
     volumes:
-      - ""
+      - postgres-db:/var/lib/postgresql/data
     healthcheck:
       test: pg_isready -U postgres -d postgres
       interval: 5s
@@ -22,9 +35,12 @@ services:
     container_name: marketplace-migrate
     volumes:
       - ./migrations/:/migrations
-    command: ["-path", "./migrations", "-database",  "postgres://postgres:qwerty@db:5432/postgres?sslmode=disable", "up"]
+    command: ["-path", "./migrations", "-database",  "${DB_URL}", "up"]
     links:
       - db
     depends_on:
       db:
         condition: service_healthy
+
+volumes:
+  postgres-db:
