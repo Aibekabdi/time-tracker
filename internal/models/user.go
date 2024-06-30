@@ -1,6 +1,7 @@
 package models
 
 type User struct {
+	ID             uint
 	PassportSerie  uint
 	PassportNumber uint
 	Surname        string

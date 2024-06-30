@@ -33,7 +33,7 @@ func (a *App) Run() {
 	log := a.log.With(slog.String("op", op))
 	ctx, cancel := context.WithTimeout(context.TODO(), 1*time.Minute)
 	defer cancel()
-	_, err := postgres.NewPostgres(ctx, a.log, &a.cfg.DB)
+	pool, err := postgres.NewPostgres(ctx, a.log, &a.cfg.DB)
 	if err != nil {
 		log.Error(err.Error())
 		os.Exit(1)
@@ -44,7 +44,7 @@ func (a *App) Run() {
 
 	log.Info("server is starting", slog.String("address", a.cfg.HTTPServer.Address))
 	go func() {
-		if err := srv.Run(a.cfg.HTTPServer, handlers.InitRoutes()); err != nil {
+		if err := srv.Run(a.cfg.HTTPServer, handlers.InitRoutes(pool)); err != nil {
 			if !errors.Is(err, http.ErrServerClosed) {
 				log.Error("failed to start server", slog.String("error", err.Error()))
 				os.Exit(2)

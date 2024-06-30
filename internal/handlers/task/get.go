@@ -7,5 +7,5 @@ func (h *Handler) Get(c *gin.Context) {
 }
 
 func (h *Handler) GetALL(c *gin.Context) {
-	
+
 }
