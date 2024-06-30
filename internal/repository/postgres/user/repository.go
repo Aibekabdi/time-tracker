@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/Aibekabdi/time-tracker/internal/models"
-	def "github.com/Aibekabdi/time-tracker/internal/repository/postgres"
+	def "github.com/Aibekabdi/time-tracker/internal/repository"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
